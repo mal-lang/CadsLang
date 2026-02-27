@@ -86,7 +86,8 @@ category ComputeResources {
 
       | read {C}
         user info: "The attacker can read some or all of this service's (and executed by this) source code and/or data (both local and sent/received)."
-        ->  appExecutedApps.attemptRead // Read all applications executed by this (host) application
+        ->  appExecutedApps.attemptRead, // Read all applications executed by this (host) application
+            containedData.read
 
       | attemptModify @hidden
         developer info: "Intermediate attack step to allow for defenses."
@@ -99,7 +100,8 @@ category ComputeResources {
       | modify {I}
         user info: "The attacker can modify some or all of this service's (and executed by this) source code and/or data."
         ->  fullAccess,
-            appExecutedApps.attemptModify // Gain full access to all applications executed by this (host) application
+            appExecutedApps.attemptModify, // Gain full access to all applications executed by this (host) application
+            containedData.write
 
       | attemptDeny @hidden
         developer info: "Intermediate attack step to allow for defenses."
