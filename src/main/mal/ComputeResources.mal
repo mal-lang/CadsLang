@@ -37,7 +37,7 @@ category ComputeResources {
         developer info: "Intermediate attack step to allow for defenses and trigger bypasses."
         ->  useVulnerability
 
-      & useVulnerability
+      & effect useVulnerability
         user info: "Try to exploit the associated vulnerabilities."
         developer info: "This includes vulnerabilities associated with the SoftwareProduct that this Application is running as well."
         ->  allVulnerabilities().attemptAbuse
@@ -63,7 +63,7 @@ category ComputeResources {
         user info: "The attacker is able to authenticate with the appropriate high-level privileges."
         ->  networkAccess
 
-      & networkAccess @hidden
+      & effect networkAccess @hidden
         developer info: "Intermediate attack steps for modeling the two requirements (reachability and authentication) for full access."
         ->  fullAccess
 
@@ -80,11 +80,11 @@ category ComputeResources {
         developer info: "Intermediate attack step to allow for defenses."
         ->  successfulRead
 
-      & successfulRead @hidden
+      & effect successfulRead @hidden
         developer info: "Intermediate attack step to model defenses."
         ->  read
 
-      | read {C}
+      | effect read {C}
         user info: "The attacker can read some or all of this service's (and executed by this) source code and/or data (both local and sent/received)."
         ->  appExecutedApps.attemptRead, // Read all applications executed by this (host) application
             containedData.read
@@ -93,11 +93,11 @@ category ComputeResources {
         developer info: "Intermediate attack step to allow for defenses."
         ->  successfulModify
 
-      & successfulModify @hidden
+      & effect successfulModify @hidden
         developer info: "Intermediate attack step to model defenses."
         ->  modify
 
-      | modify {I}
+      | effect modify {I}
         user info: "The attacker can modify some or all of this service's (and executed by this) source code and/or data."
         ->  fullAccess,
             appExecutedApps.attemptModify, // Gain full access to all applications executed by this (host) application
@@ -107,21 +107,17 @@ category ComputeResources {
         developer info: "Intermediate attack step to allow for defenses."
         ->  successfulDeny
 
-      & successfulDeny @hidden
+      & effect successfulDeny @hidden
         developer info: "Intermediate attack step to model defenses."
         ->  deny
 
 
-      | deny {A}
+      | effect deny {A}
         user info: "The attacker can deny some or all functionality and data pertaining to this application/service as well as executed applications."
         -> appExecutedApps.attemptDeny
 
-      & denyFromNetworkingAsset @hidden
+      & effect denyFromNetworkingAsset @hidden
         developer info: "This is an intermediate attack step to only allow deny on an application when all the connection rules and networks associated with it are denied, because an app can be serving on many different ports."
-        ->  attemptDeny
-
-      & denyFromLockout @hidden
-        developer info: "This is an intermediate attack step to only trigger deny on an application when all the executing access control roles are locked out."
         ->  attemptDeny
 
     }

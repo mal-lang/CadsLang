@@ -29,7 +29,7 @@ category IAM {
         developer info: "Intermediate attack step to allow for defenses."
         ->  assume
 
-      & assume
+      & effect assume
         user info: "After authentication or compromise of an account/identity, assume its privileges."
         developer info: "This is both legitimate and illegitimate access! Also assume all the privileges of the parent identities (on the above level/inherited by this identity) because those represent the group of (inherited) roles."
         ->  execPrivApps.authenticate,
@@ -46,7 +46,7 @@ category IAM {
         developer info: "In order to use these credentials the attacker may require additional factors."
         ->  use
 
-      & use {C}
+      & effect use {C}
         user info: "The attacker is using the credentials to perform a legitimate authentication."
         ->  identities.attemptAssume,
             credentials.use // these credentials may serve as additional required factors for other credentials in a multi-factor authentication
@@ -55,7 +55,7 @@ category IAM {
         ->  guessCredentials,
             credentials*.attemptGuessCredentials
 
-      & guessCredentials @hidden [HardAndUncertain]
+      & effect guessCredentials @hidden [HardAndUncertain]
         developer info: "The attacker can try to just guess a set of credentials. The likelihood of succeeding is dependent on how strong the credentials are."
         modeler info: "The guessability of the Credentials is influenced by the notGuessable defense on this asset and the securityAwareness defense on the User associated with the Identity that these Credentials belong to. If either the User or Identity associations are missing the assumption is made that the crentials are guessable and only the notGuessable defense would play a role in restricting this attack step."
         ->  attemptUse
